@@ -1,0 +1,23 @@
+on: [ workflow_dispatch ]
+jobs:
+  kernel:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v3
+      - name: apt_update_install
+        run: apt -yqq update && apt -yqq install python3 bison flex make gcc g++ wget curl git
+      - name: protonclang
+        run: cd ~ && git clone --depth=1 https://github.com/kdrag0n/proton-clang
+      - name: make_kernel
+        run: |
+          cd Kernel
+          dd if=../config_docker of=./arch/arm64/configs/bloomq_kor_single_defconfig
+          make -j8 -C $(pwd) O=$(pwd)/out bloomq_kor_single_defconfig
+          cd ..
+      
+      - name: artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: out
+          path: Kernel/out
+          retention-days: 1
