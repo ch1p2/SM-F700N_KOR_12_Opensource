@@ -4,8 +4,8 @@ jobs:
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v3
-      - name: apt_install
-        run: apt -y install python3 bison flex make gcc g++ wget curl git
+      - name: sudo apt -yqq update && sudo apt -yqq install
+        run: sudo apt -yqq update && sudo apt -yqq install python3 bison flex make gcc g++ wget curl git
       - name: protonclang
         run: cd ~ && git clone --depth=1 https://github.com/kdrag0n/proton-clang
       - name: make_kernel
