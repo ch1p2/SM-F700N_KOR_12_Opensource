@@ -11,6 +11,7 @@ jobs:
       - name: make_kernel
         run: |
           cd Kernel
+          dd if=../Makefile.wno-error of=./Makefile
           dd if=../config_docker of=./arch/arm64/configs/bloomq_kor_single_defconfig
           export PATH="$HOME/proton-clang/bin:$PATH"
           export CC=clang
