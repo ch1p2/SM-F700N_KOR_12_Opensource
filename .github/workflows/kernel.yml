@@ -7,13 +7,24 @@ jobs:
       - name: sudo apt -yqq update && sudo apt -yqq install
         run: sudo apt -yqq update && sudo apt -yqq install python3 bison flex make gcc g++ wget curl git
       - name: toolchain
-        run: cd Kernel && mkdir toolchain && mkdir toolchain/gcc && mkdir toolchain/gcc/linux-x86 && mkdir toolchain/gcc/linux-x86/aarch64 && mkdir toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 && cd toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 && curl https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/0a0604336d4d1067aa1aaef8d3779b31fcee841d.tar.gz | gunzip | tar x && cd ../../../.. && mkdir llvm-arm-toolchain-ship && git clone --depth=1 https://github.com/gro-w/Snapdragon-LLVM llvm-arm-toolchain-ship/10.0 && cd ..
+        run: cd Kernel && mkdir toolchain && mkdir toolchain/gcc && mkdir toolchain/gcc/linux-x86 && mkdir toolchain/gcc/linux-x86/aarch64 && mkdir toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 && cd toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 && curl https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/0a0604336d4d1067aa1aaef8d3779b31fcee841d.tar.gz | gunzip | tar x && cd ../../../.. && mkdir llvm-arm-toolchain-ship && git clone --depth=1 https://github.com/gro-w/Snapdragon-LLVM llvm-arm-toolchain-ship/10.0 && cd ~ && git clone --depth=1 https://github.com/kdrag0n/proton-clang
       - name: make_kernel
         run: |
           cd Kernel
           #dd if=../Makefile.wno-error of=./Makefile
           dd if=../config_docker of=./arch/arm64/configs/bloomq_kor_single_defconfig
-          bash build_kernel.sh
+          export PATH="$HOME/proton-clang/bin:$PATH"
+          export CC=clang
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export ARCH=arm64
+          mkdir out
+          BUILD_CROSS_COMPILE=$(pwd)/toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+          KERNEL_LLVM_BIN=$HOME/proton-clang/bin/clang
+          CLANG_TRIPLE=aarch64-linux-gnu-
+          KERNEL_MAKE_ENV="DTC_EXT=$(pwd)/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y"
+          make -j8 -C $(pwd) O=$(pwd)/out $KERNEL_MAKE_ENV ARCH=arm64 CROSS_COMPILE=$BUILD_CROSS_COMPILE REAL_CC=$KERNEL_LLVM_BIN CLANG_TRIPLE=$CLANG_TRIPLE bloomq_kor_single_defconfig
+          make -j8 -C $(pwd) O=$(pwd)/out $KERNEL_MAKE_ENV ARCH=arm64 CROSS_COMPILE=$BUILD_CROSS_COMPILE REAL_CC=$KERNEL_LLVM_BIN CLANG_TRIPLE=$CLANG_TRIPLE
+          cp out/arch/arm64/boot/Image $(pwd)/arch/arm64/boot/Image
           mv out/source ~
           cd ..
       
