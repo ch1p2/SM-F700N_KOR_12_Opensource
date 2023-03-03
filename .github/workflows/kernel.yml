@@ -11,7 +11,7 @@ jobs:
       - name: make_kernel
         run: |
           cd Kernel
-          #dd if=../config_docker of=./arch/arm64/configs/bloomq_kor_single_defconfig
+          dd if=../config_docker of=./arch/arm64/configs/bloomq_kor_single_defconfig
           export PATH="$HOME/proton-clang/bin:$PATH"
           export CC=clang
           export CROSS_COMPILE=aarch64-linux-gnu-
@@ -22,6 +22,8 @@ jobs:
           export OBJDUMP=llvm-objdump
           export STRIP=llvm-strip
           make -j8 -C $(pwd) O=$(pwd)/out CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- DTC_EXT=$(pwd)/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y bloomq_kor_single_defconfig
+          make -j8 -C $(pwd) O=$(pwd)/out CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- DTC_EXT=$(pwd)/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y
+          mv out/source ~
           cd ..
       
       - name: artifact
