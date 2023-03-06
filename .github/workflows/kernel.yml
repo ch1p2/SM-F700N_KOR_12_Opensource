@@ -15,13 +15,9 @@ jobs:
           mkdir toolchain/gcc/linux-x86/aarch64
           mkdir toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
           cd toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9
-          curl -OL https://github.com/ch1p2/SM-F700N_KOR_12_Opensource/releases/download/v0.0.0-toolchain/aarch64-linux-android-4.9-0a0604336d4d1067aa1aaef8d3779b31fcee841d.tar.gz
-          tar xf aarch64-linux-android-4.9-0a0604336d4d1067aa1aaef8d3779b31fcee841d.tar.gz
-          rm aarch64-linux-android-4.9-0a0604336d4d1067aa1aaef8d3779b31fcee841d.tar.gz
+          curl -L https://github.com/ch1p2/SM-F700N_KOR_12_Opensource/releases/download/v0.0.0-toolchain/aarch64-linux-android-4.9-0a0604336d4d1067aa1aaef8d3779b31fcee841d.tar.gz | gunzip | tar x
           cd ../../../../..
-          curl -OL https://github.com/ch1p2/SM-F700N_KOR_12_Opensource/releases/download/v0.0.0-toolchain/toolchain.tar.gz
-          tar xf toolchain.tar.gz
-          rm toolchain.tar.gz
+          curl -L https://github.com/ch1p2/SM-F700N_KOR_12_Opensource/releases/download/v0.0.0-toolchain/toolchain.tar.gz | gunzip | tar x
           
       - name: make_kernel
         run: |
